@@ -19,15 +19,14 @@ export function Lobby({
       <div className="w-full md:w-1/2 h-[500px] relative group">
         <div className="absolute -inset-1 bg-gradient-to-r from-zinc-200 to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
         <Card className="relative h-full flex flex-col overflow-hidden border-border bg-white dark:bg-zinc-950">
-          {/* Header */}
+          {/* Header with macOS Buttons */}
           <div className="p-3 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 flex items-center gap-4 transition-colors">
             <div className="flex gap-1.5">
               <div className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]/30" />
               <div className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123]/30" />
               <div className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29]/30" />
             </div>
-            {/* YOUR FIX APPLIED HERE: Explicit colors, no opacity */}
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400 tracking-wide">
+            <span className="text-xs font-medium text-zinc-400 tracking-wide">
               LOCAL DRAFT
             </span>
           </div>
@@ -35,14 +34,16 @@ export function Lobby({
           <textarea
             value={textContent}
             onChange={(e) => setTextContent(e.target.value)}
-            className="flex-1 w-full p-6 resize-none focus:outline-none bg-transparent font-mono text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 leading-relaxed z-10"
+            // FIXED: Using !important classes to FORCE visibility
+            // Light Mode: Dark Text | Dark Mode: White Text
+            className="flex-1 w-full p-6 resize-none focus:outline-none bg-transparent font-mono text-zinc-900 dark:text-zinc-50 placeholder:text-zinc-400 leading-relaxed z-10"
             placeholder="Start typing your ideas here..."
             spellCheck={false}
           />
         </Card>
       </div>
 
-      {/* Actions (Unchanged) */}
+      {/* Actions */}
       <div className="w-full md:w-1/3 space-y-6">
         <div className="text-center md:text-left">
           <h2 className="text-3xl font-bold mb-2">Collaborate instantly.</h2>
