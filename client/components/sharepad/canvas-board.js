@@ -8,7 +8,6 @@ export function CanvasBoard({ socket, roomId, color, setColor }) {
   const isDrawing = useRef(false);
   const prevPoint = useRef(null);
 
-  // Sync Incoming Draws
   useEffect(() => {
     if (!socket) return;
 
@@ -31,7 +30,6 @@ export function CanvasBoard({ socket, roomId, color, setColor }) {
     };
   }, [socket]);
 
-  // Drawing Logic
   const drawLine = (ctx, start, end, strokeColor) => {
     ctx.beginPath();
     ctx.lineWidth = 3;
@@ -45,10 +43,14 @@ export function CanvasBoard({ socket, roomId, color, setColor }) {
   const computePoint = (e) => {
     const canvas = canvasRef.current;
     if (!canvas) return null;
+
     const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
     return {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY,
     };
   };
 
@@ -62,10 +64,8 @@ export function CanvasBoard({ socket, roomId, color, setColor }) {
     const currentPoint = computePoint(e);
     const ctx = canvasRef.current.getContext("2d");
 
-    // Draw Locally
     drawLine(ctx, prevPoint.current, currentPoint, color);
 
-    // Broadcast
     socket.emit("draw-line", {
       roomId,
       drawData: { prevPoint: prevPoint.current, currentPoint, color },
@@ -75,9 +75,10 @@ export function CanvasBoard({ socket, roomId, color, setColor }) {
   };
 
   return (
-    <div className="absolute inset-0 bg-white z-0 flex flex-col">
+    // 3. FIXED: Explicit theme background colors ensure it's not transparent/dark always
+    <div className="absolute inset-0 bg-white dark:bg-zinc-950 z-0 flex flex-col transition-colors duration-200">
       {/* Toolbar */}
-      <div className="h-12 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between px-4 bg-zinc-50 dark:bg-zinc-900">
+      <div className="h-12 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between px-4 bg-white dark:bg-zinc-900 transition-colors z-10">
         <div className="flex gap-2">
           {["#000000", "#EF4444", "#3B82F6", "#10B981", "#F59E0B"].map((c) => (
             <button
@@ -107,7 +108,10 @@ export function CanvasBoard({ socket, roomId, color, setColor }) {
       </div>
 
       {/* Canvas Area */}
-      <div className="flex-1 relative bg-[url('https://www.transparenttextures.com/patterns/graphy.png')] cursor-crosshair">
+      <div className="flex-1 relative cursor-crosshair overflow-hidden">
+        {/* Optional Pattern Overlay - opacity kept low so background color shows through */}
+        <div className="absolute inset-0 pointer-events-none opacity-10 bg-[url('https://www.transparenttextures.com/patterns/graphy.png')]"></div>
+
         <canvas
           ref={canvasRef}
           width={1000}
@@ -116,7 +120,7 @@ export function CanvasBoard({ socket, roomId, color, setColor }) {
           onMouseMove={onMouseMove}
           onMouseUp={() => (isDrawing.current = false)}
           onMouseLeave={() => (isDrawing.current = false)}
-          className="absolute top-0 left-0 w-full h-full touch-none"
+          className="absolute top-0 left-0 w-full h-full touch-none z-10"
         />
       </div>
     </div>
