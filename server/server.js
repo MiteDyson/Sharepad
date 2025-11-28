@@ -1,15 +1,16 @@
 const { Server } = require("socket.io");
 
-const PORT = 3001;
+// 1. Allow dynamic port (Required for Render)
+const PORT = process.env.PORT || 3001;
 
 const io = new Server(PORT, {
   cors: {
-    origin: "http://localhost:3000",
+    // 2. Allow ALL origins for simplicity, or add your Vercel URL later
+    origin: "*",
     methods: ["GET", "POST"],
   },
 });
 
-// Store users per room: { roomId: [ { id, name, color, animal } ] }
 const roomUsers = {};
 
 const ANIMALS = ["Cat", "Dog", "Fish", "Rabbit", "Bird", "Turtle"];
@@ -27,33 +28,30 @@ const getRandomAvatar = () => ({
   color: COLORS[Math.floor(Math.random() * COLORS.length)],
 });
 
-console.log(`> SharePad Server ready on http://localhost:${PORT}`);
+console.log(`> SharePad Server ready on port ${PORT}`);
 
 io.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`);
 
   socket.on("join-room", ({ roomId, username }) => {
     socket.join(roomId);
-
-    // Initialize room if not exists
     if (!roomUsers[roomId]) roomUsers[roomId] = [];
 
-    // Add user with random avatar
     const user = { id: socket.id, name: username, ...getRandomAvatar() };
     roomUsers[roomId].push(user);
 
-    // Broadcast updated user list
     io.to(roomId).emit("room-users", roomUsers[roomId]);
-    io.to(roomId).emit("user-joined", { username });
+    console.log(`${username} joined ${roomId}`);
   });
 
-  // Sync Events
   socket.on("text-update", ({ roomId, content }) =>
     socket.to(roomId).emit("text-update", content)
   );
+
   socket.on("draw-line", ({ roomId, drawData }) =>
     socket.to(roomId).emit("draw-line", drawData)
   );
+
   socket.on("clear-canvas", ({ roomId }) =>
     socket.to(roomId).emit("clear-canvas")
   );

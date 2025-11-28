@@ -8,8 +8,11 @@ export function useSocket() {
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    // Initialize connection
-    socketRef.current = io("http://localhost:3001");
+    // 1. Use Environment Variable for URL
+    const url = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3001";
+
+    // 2. Initialize connection
+    socketRef.current = io(url);
 
     socketRef.current.on("connect", () => {
       setIsConnected(true);
@@ -19,13 +22,11 @@ export function useSocket() {
       setIsConnected(false);
     });
 
-    // Cleanup on unmount
     return () => {
       if (socketRef.current) socketRef.current.disconnect();
     };
   }, []);
 
-  // Helper to join room
   const joinRoom = (roomId, username) => {
     if (socketRef.current) {
       socketRef.current.emit("join-room", { roomId, username });
