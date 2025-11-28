@@ -30,7 +30,6 @@ export function Room({ socket, roomId, textContent, setTextContent }) {
             onClick={() => setView("text")}
             className={cn(
               "px-6 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 border-2",
-              // FIXED: Added border colors for active state
               view === "text"
                 ? "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm border-zinc-300 dark:border-zinc-500"
                 : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 border-transparent"
@@ -42,7 +41,6 @@ export function Room({ socket, roomId, textContent, setTextContent }) {
             onClick={() => setView("draw")}
             className={cn(
               "px-6 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 border-2",
-              // FIXED: Added border colors for active state
               view === "draw"
                 ? "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm border-zinc-300 dark:border-zinc-500"
                 : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 border-transparent"
@@ -53,7 +51,13 @@ export function Room({ socket, roomId, textContent, setTextContent }) {
         </div>
       </div>
 
-      <Card className="flex-1 overflow-hidden relative shadow-lg border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+      <Card
+        className={cn(
+          "flex-1 overflow-hidden relative border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950",
+          // FIX: Explicitly handle shadows for the main canvas card
+          "shadow-lg dark:shadow-none"
+        )}
+      >
         <div
           className={cn(
             "absolute inset-0 bg-white dark:bg-zinc-950 z-10 transition-opacity duration-300",

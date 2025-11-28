@@ -42,13 +42,12 @@ io.on("connection", (socket) => {
     const user = { id: socket.id, name: username, ...getRandomAvatar() };
     roomUsers[roomId].push(user);
 
-    // Broadcast updated user list to everyone in room
+    // Broadcast updated user list
     io.to(roomId).emit("room-users", roomUsers[roomId]);
-
-    console.log(`${username} joined ${roomId}`);
+    io.to(roomId).emit("user-joined", { username });
   });
 
-  // Data Sync Events
+  // Sync Events
   socket.on("text-update", ({ roomId, content }) =>
     socket.to(roomId).emit("text-update", content)
   );
@@ -60,13 +59,12 @@ io.on("connection", (socket) => {
   );
 
   socket.on("disconnect", () => {
-    // Remove user from all rooms
     for (const roomId in roomUsers) {
       const index = roomUsers[roomId].findIndex((u) => u.id === socket.id);
       if (index !== -1) {
         roomUsers[roomId].splice(index, 1);
-        io.to(roomId).emit("room-users", roomUsers[roomId]); // Update remaining users
-        if (roomUsers[roomId].length === 0) delete roomUsers[roomId]; // Cleanup empty rooms
+        io.to(roomId).emit("room-users", roomUsers[roomId]);
+        if (roomUsers[roomId].length === 0) delete roomUsers[roomId];
       }
     }
   });

@@ -24,6 +24,17 @@ import { toast } from "sonner";
 
 const IconMap = { Cat, Dog, Fish, Rabbit, Bird, Turtle };
 
+// FIX: We must explicitly mention these classes here so Tailwind
+// detects them and generates the CSS. Otherwise, they are purged.
+const AVATAR_COLORS = [
+  "bg-red-500",
+  "bg-blue-500",
+  "bg-green-500",
+  "bg-yellow-500",
+  "bg-purple-500",
+  "bg-pink-500",
+];
+
 export default function SharePad() {
   const { setTheme, theme } = useTheme();
   const { socket, joinRoom } = useSocket();
@@ -90,10 +101,10 @@ export default function SharePad() {
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-zinc-200 relative overflow-hidden transition-colors duration-200">
-      {/* Background */}
+      {/* Background Decoration (with Light Mode visibility fix) */}
       <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-500 rounded-full blur-[120px] opacity-60 dark:opacity-20 animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500 rounded-full blur-[120px] opacity-60 dark:opacity-20 animate-pulse delay-700" />
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-600 dark:bg-purple-500 rounded-full blur-[120px] opacity-80 dark:opacity-20 animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600 dark:bg-blue-500 rounded-full blur-[120px] opacity-80 dark:opacity-20 animate-pulse delay-700" />
       </div>
 
       <div className="relative z-10 container mx-auto px-4 py-8 h-screen flex flex-col">
@@ -101,9 +112,10 @@ export default function SharePad() {
         <header className="flex items-center justify-between mb-6">
           <div
             onClick={() => (window.location.href = "/")}
-            className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+            className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
           >
-            <div className="w-8 h-8 bg-foreground rounded-lg flex items-center justify-center text-background font-bold">
+            {/* Logo: Black box (Light) / White box (Dark) */}
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-2xl shadow-sm transition-colors duration-200 bg-black text-white dark:bg-white dark:text-black">
               S
             </div>
             <h1 className="text-xl font-bold tracking-tight">SharePad</h1>
@@ -119,7 +131,7 @@ export default function SharePad() {
                       key={user.id}
                       className={cn(
                         "w-8 h-8 rounded-full border-2 border-white dark:border-zinc-900 flex items-center justify-center text-white shadow-sm",
-                        user.color
+                        user.color // This class is now safely generated because of AVATAR_COLORS above
                       )}
                       title={user.name}
                     >
@@ -132,7 +144,7 @@ export default function SharePad() {
 
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="w-9 h-9 flex items-center justify-center rounded-full border shadow-sm bg-card border-border text-muted-foreground hover:text-foreground transition-all"
+              className="w-9 h-9 flex items-center justify-center rounded-full border shadow-sm bg-card border-border text-muted-foreground hover:text-foreground transition-all cursor-pointer"
             >
               <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
               <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
@@ -147,7 +159,7 @@ export default function SharePad() {
                   <span className="font-mono font-bold">{roomId}</span>
                   <button
                     onClick={copyToClipboard}
-                    className="text-muted-foreground hover:text-foreground"
+                    className="text-muted-foreground hover:text-foreground cursor-pointer"
                   >
                     <Copy size={14} />
                   </button>

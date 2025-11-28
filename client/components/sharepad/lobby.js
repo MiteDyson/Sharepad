@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Input, Card } from "@/components/ui/design-system";
+import { Button, Input, Card, cn } from "@/components/ui/design-system";
 import { Users, QrCode } from "lucide-react";
 
 export function Lobby({
@@ -17,8 +17,15 @@ export function Lobby({
     <div className="flex-1 flex flex-col md:flex-row gap-8 items-center justify-center">
       {/* Local Preview */}
       <div className="w-full md:w-1/2 h-[500px] relative group">
+        {/* Glowing backdrop effect */}
         <div className="absolute -inset-1 bg-gradient-to-r from-zinc-200 to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
-        <Card className="relative h-full flex flex-col overflow-hidden border-border bg-white dark:bg-zinc-950">
+
+        <Card
+          className={cn(
+            "relative h-full flex flex-col overflow-hidden border-border bg-white dark:bg-zinc-950",
+            "shadow-lg dark:shadow-none"
+          )}
+        >
           {/* Header with macOS Buttons */}
           <div className="p-3 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 flex items-center gap-4 transition-colors">
             <div className="flex gap-1.5">
@@ -34,8 +41,6 @@ export function Lobby({
           <textarea
             value={textContent}
             onChange={(e) => setTextContent(e.target.value)}
-            // FIXED: Using !important classes to FORCE visibility
-            // Light Mode: Dark Text | Dark Mode: White Text
             className="flex-1 w-full p-6 resize-none focus:outline-none bg-transparent font-mono text-zinc-900 dark:text-zinc-50 placeholder:text-zinc-400 leading-relaxed z-10"
             placeholder="Start typing your ideas here..."
             spellCheck={false}
@@ -81,7 +86,8 @@ export function Lobby({
           <Button
             variant="secondary"
             onClick={onJoinRoom}
-            className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/80"
+            // FIX: Added 'border-zinc-300 dark:border-zinc-700' for better outline visibility
+            className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/80 border-zinc-300 dark:border-zinc-700"
           >
             <Users size={16} className="mr-2" /> Join Session
           </Button>

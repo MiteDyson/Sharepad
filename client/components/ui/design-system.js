@@ -41,7 +41,8 @@ export const Input = ({ className, ...props }) => {
 export const Card = ({ className, children }) => (
   <div
     className={cn(
-      "rounded-xl border border-zinc-200 bg-white text-zinc-950 shadow-sm",
+      // FIX: Added 'dark:shadow-none' to remove shadows in dark mode globally
+      "rounded-xl border border-zinc-200 bg-white text-zinc-950 shadow-sm dark:shadow-none",
       className
     )}
   >
