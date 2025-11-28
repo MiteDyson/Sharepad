@@ -75,7 +75,6 @@ export function CanvasBoard({ socket, roomId, color, setColor }) {
   };
 
   return (
-    // 3. FIXED: Explicit theme background colors ensure it's not transparent/dark always
     <div className="absolute inset-0 bg-white dark:bg-zinc-950 z-0 flex flex-col transition-colors duration-200">
       {/* Toolbar */}
       <div className="h-12 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between px-4 bg-white dark:bg-zinc-900 transition-colors z-10">
@@ -109,7 +108,6 @@ export function CanvasBoard({ socket, roomId, color, setColor }) {
 
       {/* Canvas Area */}
       <div className="flex-1 relative cursor-crosshair overflow-hidden">
-        {/* Optional Pattern Overlay - opacity kept low so background color shows through */}
         <div className="absolute inset-0 pointer-events-none opacity-10 bg-[url('https://www.transparenttextures.com/patterns/graphy.png')]"></div>
 
         <canvas

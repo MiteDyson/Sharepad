@@ -20,7 +20,7 @@ import {
 import { useSocket } from "@/hooks/use-socket";
 import { Lobby } from "@/components/sharepad/lobby";
 import { Room } from "@/components/sharepad/room";
-import { toast } from "sonner"; // <--- NEW IMPORT
+import { toast } from "sonner";
 
 const IconMap = { Cat, Dog, Fish, Rabbit, Bird, Turtle };
 
@@ -45,18 +45,10 @@ export default function SharePad() {
 
   useEffect(() => {
     if (!socket) return;
-
-    // Listen for new users and trigger a toast
-    socket.on("room-users", (activeUsers) => {
-      // Logic to detect NEW user could go here, for now we just sync list
-      setUsers(activeUsers);
-    });
-
-    // We can add a specific event for joining to show a toast
-    socket.on("user-joined", ({ username }) => {
-      toast(`${username} joined the session`, { icon: "👋" });
-    });
-
+    socket.on("room-users", setUsers);
+    socket.on("user-joined", ({ username }) =>
+      toast(`${username} joined`, { icon: "👋" })
+    );
     return () => {
       socket.off("room-users");
       socket.off("user-joined");
@@ -64,58 +56,41 @@ export default function SharePad() {
   }, [socket]);
 
   const handleCreateRoom = () => {
-    if (!username) {
-      toast.error("Please enter a nickname first!"); // <--- TOAST
-      return;
-    }
-    const newRoomId = uuidv4().slice(0, 6).toUpperCase();
-    joinRoom(newRoomId, username);
-    setRoomId(newRoomId);
+    if (!username) return toast.error("Enter a nickname!");
+    const newId = uuidv4().slice(0, 6).toUpperCase();
+    joinRoom(newId, username);
+    setRoomId(newId);
     setStatus("joined");
-    window.history.pushState({}, "", `?room=${newRoomId}`);
-    toast.success("Room created successfully!"); // <--- TOAST
+    window.history.pushState({}, "", `?room=${newId}`);
+    toast.success("Room created!");
   };
 
   const handleJoinRoom = () => {
-    if (!username) {
-      toast.error("Please enter a nickname first!"); // <--- TOAST
-      return;
-    }
-    if (!joinCode) {
-      toast.error("Please enter a Room ID!"); // <--- TOAST
-      return;
-    }
+    if (!username) return toast.error("Enter a nickname!");
+    if (!joinCode) return toast.error("Enter a Room ID!");
     const code = joinCode.toUpperCase();
     joinRoom(code, username);
     setRoomId(code);
     setStatus("joined");
     window.history.pushState({}, "", `?room=${code}`);
-    toast.success("Joined room successfully!"); // <--- TOAST
+    toast.success("Joined room!");
   };
 
   const handleLeave = () => {
     setStatus("lobby");
     setRoomId("");
     window.history.pushState({}, "", window.location.pathname);
-    toast("You left the session"); // <--- TOAST
+    toast("Left session");
   };
 
   const copyToClipboard = () => {
-    const link = `${window.location.origin}?room=${roomId}`;
-    navigator.clipboard.writeText(link);
-    // REDDIT STYLE TOAST
-    toast.success("Link copied to clipboard", {
-      description: "Share it with your friends to collaborate.",
-    });
-  };
-
-  const goHome = () => {
-    window.location.href = "/";
+    navigator.clipboard.writeText(`${window.location.origin}?room=${roomId}`);
+    toast.success("Link copied!");
   };
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-zinc-200 relative overflow-hidden transition-colors duration-200">
-      {/* Background Animation */}
+      {/* Background */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-500 rounded-full blur-[120px] opacity-60 dark:opacity-20 animate-pulse" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500 rounded-full blur-[120px] opacity-60 dark:opacity-20 animate-pulse delay-700" />
@@ -125,7 +100,7 @@ export default function SharePad() {
         {/* Header */}
         <header className="flex items-center justify-between mb-6">
           <div
-            onClick={goHome}
+            onClick={() => (window.location.href = "/")}
             className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
           >
             <div className="w-8 h-8 bg-foreground rounded-lg flex items-center justify-center text-background font-bold">
@@ -157,14 +132,10 @@ export default function SharePad() {
 
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className={cn(
-                "w-9 h-9 flex items-center justify-center rounded-full border shadow-sm transition-all",
-                "bg-card border-border text-muted-foreground hover:text-foreground"
-              )}
+              className="w-9 h-9 flex items-center justify-center rounded-full border shadow-sm bg-card border-border text-muted-foreground hover:text-foreground transition-all"
             >
               <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
               <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-              <span className="sr-only">Toggle theme</span>
             </button>
 
             {status === "joined" && (
@@ -193,6 +164,7 @@ export default function SharePad() {
           </div>
         </header>
 
+        {/* Content */}
         <div className="flex-1 flex flex-col max-w-5xl mx-auto w-full">
           {status === "lobby" ? (
             <Lobby
