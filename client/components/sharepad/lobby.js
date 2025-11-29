@@ -1,5 +1,3 @@
-// client/components/sharepad/lobby.js
-
 "use client";
 
 import { Button, Input, Card, cn } from "@/components/ui/design-system";
@@ -16,10 +14,11 @@ export function Lobby({
   onJoinRoom,
 }) {
   return (
-    <div className="flex-1 flex flex-col md:flex-row gap-6 md:gap-8 items-center justify-center overflow-y-auto p-1">
+    // Added py-4 to give some breathing room inside the scroll view
+    <div className="flex-1 flex flex-col md:flex-row gap-6 md:gap-8 items-center justify-center py-4">
       {/* Local Preview */}
+      {/* Reduced height on mobile to h-[280px] so it doesn't take the whole screen */}
       <div className="w-full md:w-1/2 h-[280px] md:h-[500px] relative group shrink-0">
-        {/* Glowing backdrop effect */}
         <div className="absolute -inset-1 bg-gradient-to-r from-zinc-200 to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
 
         <Card
@@ -28,7 +27,6 @@ export function Lobby({
             "shadow-lg dark:shadow-none"
           )}
         >
-          {/* Header */}
           <div className="p-3 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 flex items-center gap-4 transition-colors">
             <div className="flex gap-1.5">
               <div className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]/30" />
@@ -51,12 +49,12 @@ export function Lobby({
       </div>
 
       {/* Actions */}
-      <div className="w-full md:w-1/3 space-y-4 md:space-y-6 pb-8 md:pb-0">
+      <div className="w-full md:w-1/3 space-y-4 md:space-y-6 pb-4">
         <div className="text-center md:text-left">
           <h2 className="text-2xl md:text-3xl font-bold mb-2">
             Collaborate instantly.
           </h2>
-          <p className="text-sm md:text-base text-muted-foreground mb-4 md:mb-6">
+          <p className="text-sm md:text-base text-muted-foreground mb-2 md:mb-6">
             Create a secure session or join one to sketch and write together.
           </p>
         </div>

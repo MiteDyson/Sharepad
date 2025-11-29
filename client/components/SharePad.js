@@ -1,5 +1,3 @@
-// client/components/SharePad.js
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -100,17 +98,19 @@ export default function SharePad() {
   };
 
   return (
-    // Changed h-screen to h-[100dvh] for mobile browsers
-    <div className="h-[100dvh] bg-background text-foreground font-sans selection:bg-zinc-200 relative overflow-hidden transition-colors duration-200 flex flex-col">
+    // FIX: Use h-[100dvh] for mobile browsers to handle address bar resizing correctly
+    // FIX: Removed 'min-h-screen' and added 'flex flex-col' to ensure full height usage
+    <div className="h-[100dvh] w-full bg-background text-foreground font-sans selection:bg-zinc-200 relative overflow-hidden transition-colors duration-200 flex flex-col">
       {/* Background Decoration */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-600 dark:bg-purple-500 rounded-full blur-[120px] opacity-80 dark:opacity-20 animate-pulse" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600 dark:bg-blue-500 rounded-full blur-[120px] opacity-80 dark:opacity-20 animate-pulse delay-700" />
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 py-4 md:py-8 flex-1 flex flex-col h-full overflow-hidden">
-        {/* Header - Made more responsive with flex-wrap */}
-        <header className="flex flex-wrap items-center justify-between gap-y-3 mb-4 md:mb-6 shrink-0">
+      {/* Main Container */}
+      <div className="relative z-10 flex-1 flex flex-col w-full max-w-5xl mx-auto h-full overflow-hidden">
+        {/* Header: shrink-0 ensures it doesn't get squished, static height */}
+        <header className="shrink-0 flex items-center justify-between px-4 py-4 md:py-6">
           <div
             onClick={() => (window.location.href = "/")}
             className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
@@ -123,7 +123,7 @@ export default function SharePad() {
             </h1>
           </div>
 
-          <div className="flex items-center gap-2 md:gap-3 ml-auto">
+          <div className="flex items-center gap-2 md:gap-3">
             {status === "joined" && (
               <div className="flex -space-x-2 mr-2 md:mr-4">
                 {users.slice(0, 4).map((user) => {
@@ -186,8 +186,8 @@ export default function SharePad() {
           </div>
         </header>
 
-        {/* Content */}
-        <div className="flex-1 flex flex-col max-w-5xl mx-auto w-full min-h-0">
+        {/* Content Area: flex-1 allows it to fill space, min-h-0 allows internal scrolling */}
+        <div className="flex-1 flex flex-col w-full min-h-0 overflow-y-auto px-4 pb-20 md:pb-8">
           {status === "lobby" ? (
             <Lobby
               username={username}
