@@ -1,6 +1,6 @@
 
 
-# 📝 **Sharepad – Real-Time Collaborative Notes & Sharing Platform**
+# 📝 **Sharepad – Real-Time Collaborative Notepad & Sharing Platform**
 
 <div align="center">
 
@@ -25,7 +25,7 @@
 
 ## ✨ **What is Sharepad?**
 
-**Sharepad** is a lightning-fast, real-time notes application that allows anyone to:
+**Sharepad** is a lightning-fast, real-time notepad application that allows anyone to:
 
 * Create a note instantly
 * Share it using an auto-generated link
