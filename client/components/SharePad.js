@@ -1,3 +1,5 @@
+// client/components/SharePad.js
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -24,8 +26,6 @@ import { toast } from "sonner";
 
 const IconMap = { Cat, Dog, Fish, Rabbit, Bird, Turtle };
 
-// FIX: We must explicitly mention these classes here so Tailwind
-// detects them and generates the CSS. Otherwise, they are purged.
 const AVATAR_COLORS = [
   "bg-red-500",
   "bg-blue-500",
@@ -100,38 +100,40 @@ export default function SharePad() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-zinc-200 relative overflow-hidden transition-colors duration-200">
-      {/* Background Decoration (with Light Mode visibility fix) */}
+    // Changed h-screen to h-[100dvh] for mobile browsers
+    <div className="h-[100dvh] bg-background text-foreground font-sans selection:bg-zinc-200 relative overflow-hidden transition-colors duration-200 flex flex-col">
+      {/* Background Decoration */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-600 dark:bg-purple-500 rounded-full blur-[120px] opacity-80 dark:opacity-20 animate-pulse" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600 dark:bg-blue-500 rounded-full blur-[120px] opacity-80 dark:opacity-20 animate-pulse delay-700" />
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 py-8 h-screen flex flex-col">
-        {/* Header */}
-        <header className="flex items-center justify-between mb-6">
+      <div className="relative z-10 container mx-auto px-4 py-4 md:py-8 flex-1 flex flex-col h-full overflow-hidden">
+        {/* Header - Made more responsive with flex-wrap */}
+        <header className="flex flex-wrap items-center justify-between gap-y-3 mb-4 md:mb-6 shrink-0">
           <div
             onClick={() => (window.location.href = "/")}
             className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
           >
-            {/* Logo: Black box (Light) / White box (Dark) */}
             <div className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-2xl shadow-sm transition-colors duration-200 bg-black text-white dark:bg-white dark:text-black">
               S
             </div>
-            <h1 className="text-xl font-bold tracking-tight">SharePad</h1>
+            <h1 className="text-xl font-bold tracking-tight hidden sm:block">
+              SharePad
+            </h1>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3 ml-auto">
             {status === "joined" && (
-              <div className="flex -space-x-2 mr-4">
-                {users.map((user) => {
+              <div className="flex -space-x-2 mr-2 md:mr-4">
+                {users.slice(0, 4).map((user) => {
                   const Icon = IconMap[user.animal] || Cat;
                   return (
                     <div
                       key={user.id}
                       className={cn(
                         "w-8 h-8 rounded-full border-2 border-white dark:border-zinc-900 flex items-center justify-center text-white shadow-sm",
-                        user.color // This class is now safely generated because of AVATAR_COLORS above
+                        user.color
                       )}
                       title={user.name}
                     >
@@ -139,6 +141,11 @@ export default function SharePad() {
                     </div>
                   );
                 })}
+                {users.length > 4 && (
+                  <div className="w-8 h-8 rounded-full border-2 border-white dark:border-zinc-900 bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-xs font-bold text-muted-foreground">
+                    +{users.length - 4}
+                  </div>
+                )}
               </div>
             )}
 
@@ -152,14 +159,16 @@ export default function SharePad() {
 
             {status === "joined" && (
               <>
-                <div className="flex items-center gap-2 bg-card px-3 py-1.5 rounded-full border border-border shadow-sm">
-                  <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                <div className="flex items-center gap-2 bg-card px-2 md:px-3 py-1.5 rounded-full border border-border shadow-sm max-w-[120px] md:max-w-none">
+                  <span className="hidden md:inline text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     Code:
                   </span>
-                  <span className="font-mono font-bold">{roomId}</span>
+                  <span className="font-mono font-bold text-sm truncate">
+                    {roomId}
+                  </span>
                   <button
                     onClick={copyToClipboard}
-                    className="text-muted-foreground hover:text-foreground cursor-pointer"
+                    className="text-muted-foreground hover:text-foreground cursor-pointer shrink-0"
                   >
                     <Copy size={14} />
                   </button>
@@ -167,9 +176,10 @@ export default function SharePad() {
                 <Button
                   variant="destructive"
                   onClick={handleLeave}
-                  className="h-9 text-xs"
+                  className="h-9 px-3 text-xs"
                 >
-                  <LogOut size={14} className="mr-2" /> Leave
+                  <LogOut size={14} className="md:mr-2" />
+                  <span className="hidden md:inline">Leave</span>
                 </Button>
               </>
             )}
@@ -177,7 +187,7 @@ export default function SharePad() {
         </header>
 
         {/* Content */}
-        <div className="flex-1 flex flex-col max-w-5xl mx-auto w-full">
+        <div className="flex-1 flex flex-col max-w-5xl mx-auto w-full min-h-0">
           {status === "lobby" ? (
             <Lobby
               username={username}
@@ -204,10 +214,10 @@ export default function SharePad() {
         href="https://github.com/mitedyson/sharepad"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 flex items-center gap-2 px-4 py-2 bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 rounded-full font-medium text-sm shadow-lg hover:opacity-90 transition-opacity z-50"
+        className="fixed bottom-4 left-4 md:left-auto md:bottom-6 md:right-6 flex items-center gap-2 px-3 py-2 md:px-4 md:py-2 bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 rounded-full font-medium text-xs md:text-sm shadow-lg hover:opacity-90 transition-opacity z-50"
       >
         <Github size={16} />
-        Star on GitHub
+        <span className="hidden md:inline">Star on GitHub</span>
       </a>
     </div>
   );

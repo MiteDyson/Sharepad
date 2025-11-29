@@ -1,3 +1,5 @@
+// client/components/sharepad/lobby.js
+
 "use client";
 
 import { Button, Input, Card, cn } from "@/components/ui/design-system";
@@ -14,9 +16,9 @@ export function Lobby({
   onJoinRoom,
 }) {
   return (
-    <div className="flex-1 flex flex-col md:flex-row gap-8 items-center justify-center">
+    <div className="flex-1 flex flex-col md:flex-row gap-6 md:gap-8 items-center justify-center overflow-y-auto p-1">
       {/* Local Preview */}
-      <div className="w-full md:w-1/2 h-[500px] relative group">
+      <div className="w-full md:w-1/2 h-[280px] md:h-[500px] relative group shrink-0">
         {/* Glowing backdrop effect */}
         <div className="absolute -inset-1 bg-gradient-to-r from-zinc-200 to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
 
@@ -26,7 +28,7 @@ export function Lobby({
             "shadow-lg dark:shadow-none"
           )}
         >
-          {/* Header with macOS Buttons */}
+          {/* Header */}
           <div className="p-3 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 flex items-center gap-4 transition-colors">
             <div className="flex gap-1.5">
               <div className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]/30" />
@@ -41,7 +43,7 @@ export function Lobby({
           <textarea
             value={textContent}
             onChange={(e) => setTextContent(e.target.value)}
-            className="flex-1 w-full p-6 resize-none focus:outline-none bg-transparent font-mono text-zinc-900 dark:text-zinc-50 placeholder:text-zinc-400 leading-relaxed z-10"
+            className="flex-1 w-full p-4 md:p-6 resize-none focus:outline-none bg-transparent font-mono text-sm md:text-base text-zinc-900 dark:text-zinc-50 placeholder:text-zinc-400 leading-relaxed z-10"
             placeholder="Start typing your ideas here..."
             spellCheck={false}
           />
@@ -49,10 +51,12 @@ export function Lobby({
       </div>
 
       {/* Actions */}
-      <div className="w-full md:w-1/3 space-y-6">
+      <div className="w-full md:w-1/3 space-y-4 md:space-y-6 pb-8 md:pb-0">
         <div className="text-center md:text-left">
-          <h2 className="text-3xl font-bold mb-2">Collaborate instantly.</h2>
-          <p className="text-muted-foreground mb-6">
+          <h2 className="text-2xl md:text-3xl font-bold mb-2">
+            Collaborate instantly.
+          </h2>
+          <p className="text-sm md:text-base text-muted-foreground mb-4 md:mb-6">
             Create a secure session or join one to sketch and write together.
           </p>
         </div>
@@ -72,7 +76,7 @@ export function Lobby({
 
           <div className="grid grid-cols-2 gap-3 pt-2">
             <Button onClick={onCreateRoom} className="w-full">
-              <QrCode size={16} className="mr-2" /> Create Room
+              <QrCode size={16} className="mr-2" /> Create
             </Button>
             <div className="relative">
               <Input
@@ -86,7 +90,6 @@ export function Lobby({
           <Button
             variant="secondary"
             onClick={onJoinRoom}
-            // FIX: Added 'border-zinc-300 dark:border-zinc-700' for better outline visibility
             className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/80 border-zinc-300 dark:border-zinc-700"
           >
             <Users size={16} className="mr-2" /> Join Session

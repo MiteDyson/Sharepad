@@ -1,3 +1,5 @@
+// client/components/sharepad/canvas-board.js
+
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -48,18 +50,26 @@ export function CanvasBoard({ socket, roomId, color, setColor }) {
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
 
+    // Handle both mouse and touch events
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
     return {
-      x: (e.clientX - rect.left) * scaleX,
-      y: (e.clientY - rect.top) * scaleY,
+      x: (clientX - rect.left) * scaleX,
+      y: (clientY - rect.top) * scaleY,
     };
   };
 
-  const onMouseDown = (e) => {
+  const onStart = (e) => {
+    // Prevent scrolling when touching canvas
+    if (e.touches) {
+      // e.preventDefault(); // React synthetic events might complain, handled by CSS touch-none
+    }
     isDrawing.current = true;
     prevPoint.current = computePoint(e);
   };
 
-  const onMouseMove = (e) => {
+  const onMove = (e) => {
     if (!isDrawing.current) return;
     const currentPoint = computePoint(e);
     const ctx = canvasRef.current.getContext("2d");
@@ -74,17 +84,29 @@ export function CanvasBoard({ socket, roomId, color, setColor }) {
     prevPoint.current = currentPoint;
   };
 
+  const onEnd = () => {
+    isDrawing.current = false;
+  };
+
   return (
     <div className="absolute inset-0 bg-white dark:bg-zinc-950 z-0 flex flex-col transition-colors duration-200">
-      {/* Toolbar */}
-      <div className="h-12 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between px-4 bg-white dark:bg-zinc-900 transition-colors z-10">
-        <div className="flex gap-2">
-          {["#000000", "#EF4444", "#3B82F6", "#10B981", "#F59E0B"].map((c) => (
+      {/* Toolbar - Added overflow-x-auto for small screens */}
+      <div className="h-12 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between px-2 md:px-4 bg-white dark:bg-zinc-900 transition-colors z-10 shrink-0">
+        <div className="flex gap-2 overflow-x-auto no-scrollbar py-1">
+          {[
+            "#000000",
+            "#EF4444",
+            "#3B82F6",
+            "#10B981",
+            "#F59E0B",
+            "#8B5CF6",
+            "#EC4899",
+          ].map((c) => (
             <button
               key={c}
               onClick={() => setColor(c)}
               className={cn(
-                "w-6 h-6 rounded-full border-2 transition-transform",
+                "w-6 h-6 rounded-full border-2 transition-transform shrink-0",
                 color === c
                   ? "border-zinc-900 dark:border-white scale-110"
                   : "border-transparent hover:scale-105"
@@ -100,9 +122,9 @@ export function CanvasBoard({ socket, roomId, color, setColor }) {
             ctx.clearRect(0, 0, 1000, 800);
             socket.emit("clear-canvas", { roomId });
           }}
-          className="text-xs text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
+          className="text-xs text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 whitespace-nowrap ml-2"
         >
-          Clear Board
+          Clear
         </Button>
       </div>
 
@@ -114,10 +136,13 @@ export function CanvasBoard({ socket, roomId, color, setColor }) {
           ref={canvasRef}
           width={1000}
           height={800}
-          onMouseDown={onMouseDown}
-          onMouseMove={onMouseMove}
-          onMouseUp={() => (isDrawing.current = false)}
-          onMouseLeave={() => (isDrawing.current = false)}
+          onMouseDown={onStart}
+          onMouseMove={onMove}
+          onMouseUp={onEnd}
+          onMouseLeave={onEnd}
+          onTouchStart={onStart}
+          onTouchMove={onMove}
+          onTouchEnd={onEnd}
           className="absolute top-0 left-0 w-full h-full touch-none z-10"
         />
       </div>

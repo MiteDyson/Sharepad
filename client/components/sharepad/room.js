@@ -1,3 +1,5 @@
+// client/components/sharepad/room.js
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -23,30 +25,30 @@ export function Room({ socket, roomId, textContent, setTextContent }) {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full">
-      <div className="flex justify-center mb-4">
+    <div className="flex-1 flex flex-col h-full min-h-0">
+      <div className="flex justify-center mb-2 md:mb-4 shrink-0">
         <div className="bg-zinc-100 dark:bg-zinc-800 p-1 rounded-lg inline-flex shadow-inner border border-zinc-200 dark:border-zinc-700">
           <button
             onClick={() => setView("text")}
             className={cn(
-              "px-6 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 border-2",
+              "px-4 md:px-6 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium transition-all flex items-center gap-2 border-2",
               view === "text"
                 ? "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm border-zinc-300 dark:border-zinc-500"
                 : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 border-transparent"
             )}
           >
-            <Type size={16} /> Text
+            <Type size={14} className="md:w-4 md:h-4" /> Text
           </button>
           <button
             onClick={() => setView("draw")}
             className={cn(
-              "px-6 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 border-2",
+              "px-4 md:px-6 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium transition-all flex items-center gap-2 border-2",
               view === "draw"
                 ? "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm border-zinc-300 dark:border-zinc-500"
                 : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 border-transparent"
             )}
           >
-            <PenTool size={16} /> Draw
+            <PenTool size={14} className="md:w-4 md:h-4" /> Draw
           </button>
         </div>
       </div>
@@ -54,7 +56,6 @@ export function Room({ socket, roomId, textContent, setTextContent }) {
       <Card
         className={cn(
           "flex-1 overflow-hidden relative border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950",
-          // FIX: Explicitly handle shadows for the main canvas card
           "shadow-lg dark:shadow-none"
         )}
       >
@@ -69,7 +70,7 @@ export function Room({ socket, roomId, textContent, setTextContent }) {
           <textarea
             value={textContent}
             onChange={handleTextChange}
-            className="w-full h-full p-8 resize-none focus:outline-none font-mono text-lg leading-relaxed text-zinc-800 dark:text-zinc-200 bg-transparent"
+            className="w-full h-full p-4 md:p-8 resize-none focus:outline-none font-mono text-base md:text-lg leading-relaxed text-zinc-800 dark:text-zinc-200 bg-transparent"
             placeholder="Type here to sync with the room..."
           />
         </div>
